@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0d11">
+<title>Robson Alves Drinks - Cardápio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+ 
+<style>
+  /* ── RESET & TOKENS ── */
+  *, *::before, *::after {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+ 
+  :root {
+    --neon: #e43737;
+    --gold: #ffffff;
+    --gold-light: #ffd699;
+    --bg:      #0a0a0d;
+    --bg2:     #111116;
+    --bg3:     #18181f;
+    --surface: #1e1e28;
+    --border:  rgba(255,255,255,0.07);
+    --text:    #e43737;
+    --muted:   #a0a0b0;
+    --DNAME:   #ffffff;
+ 
+    /* safe areas para iPhones com notch */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+  }
+ 
+  html {
+    height: 100%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+ 
+  body {
+    min-height: 100%;
+    background: linear-gradient(135deg, #0d0d11 0%, #150d1e 50%, #0d0d11 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    /* evita bounce lateral no iOS */
+    overscroll-behavior-x: none;
+  }
+ 
+  /* textura de fundo */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.12) 28px, rgba(0,0,0,0.12) 30px),
+      repeating-linear-gradient(90deg, transparent, transparent 58px, rgba(0,0,0,0.06) 58px, rgba(0,0,0,0.06) 60px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.35;
+  }
+ 
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    /* mínimo da tela menos a nav de baixo (60px) */
+    min-height: calc(100svh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    padding-top: calc(2rem + var(--sat));
+    overflow: hidden;
+  }
+ 
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 40%, rgba(247,52,122,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 80% 70%, rgba(255,174,66,0.06) 0%, transparent 60%);
+    z-index: 0;
+  }
+ 
+  .hero-content { position: relative; z-index: 1; }
+ 
+  .hero-main-logo img {
+    width: 72vw;
+    max-width: 280px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 12px rgba(247,241,52,0.18));
+  }
+ 
+  .hero-divider {
+    width: 50px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 2rem;
+  }
+ 
+  .scroll-hint {
+    position: absolute;
+    bottom: calc(1.5rem + var(--sab));
+    left: 50%; transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    z-index: 1;
+    animation: fade-bob 2.2s ease-in-out infinite;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px; height: 32px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+  @keyframes fade-bob {
+    0%,100% { opacity: 0.35; transform: translateX(-50%) translateY(0); }
+    50%      { opacity: 0.85; transform: translateX(-50%) translateY(5px); }
+  }
+ 
+  /* ── NAV BOTTOM (app nativo) ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(10,10,13,0.93);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    padding-bottom: var(--sab);
+    display: flex;
+    align-items: stretch;
+    height: calc(60px + var(--sab));
+  }
+ 
+  .nav-tabs {
+    display: flex;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+ 
+  .nav-tab {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    min-width: 72px;
+    padding: 0 14px;
+    height: 60px;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    border: none; background: none;
+    border-top: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+    /* área de toque mínima */
+    -webkit-user-select: none; user-select: none;
+  }
+  .nav-tab:active { background: rgba(255,255,255,0.04); }
+  .nav-tab.active  { color: var(--neon); border-top-color: var(--neon); }
+ 
+  /* ── SECTIONS ── */
+  .section {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3.5rem 0 2rem;
+    /* espaço extra p/ a nav de baixo */
+  }
+ 
+  /* última section ganha espaço pra nav fixa */
+  .section:last-of-type {
+    padding-bottom: calc(80px + var(--sab));
+  }
+ 
+  .section-header {
+    margin-bottom: 2rem;
+    display: flex; align-items: flex-end; gap: 1rem;
+    padding: 0 16px;
+  }
+ 
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .section-title em { color: var(--gold); font-style: italic; }
+ 
+  .section-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+    margin-bottom: 0.3rem;
+  }
+ 
+  /* ── LISTA DE ITEMS ── */
+  .drink-list {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 0 16px 1rem;
+  }
+ 
+  .drink-item {
+    width: 100%;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
+    /* toque nativo */
+    cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .drink-item:last-child { border-bottom: none; }
+  .drink-item:active { background: var(--bg3); }
+ 
+  /* barra lateral ao toque */
+  .drink-item::after {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--neon);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .drink-item:active::after { opacity: 1; }
+ 
+  .drink-img {
+    width: 78px; height: 78px;
+    object-fit: contain;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 5px;
+    flex-shrink: 0;
+    filter: brightness(0.9) saturate(1.1);
+    transition: filter 0.3s;
+    align-self: center;
+    /* lazy loading nativo */
+    loading: lazy;
+  }
+  .drink-item:active .drink-img { filter: brightness(1) saturate(1.3); }
+ 
+  .drink-info {
+    padding: 0.5rem 0.6rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    min-height: 78px;
+  }
+ 
+  .drink-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+ 
+  .drink-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--DNAME);
+    line-height: 1.25;
+    word-break: break-word;
+    padding-right: 0.3rem;
+  }
+ 
+  .drink-price {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--gold);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+ 
+  .drink-desc {
+    font-size: 0.67rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 0.25rem;
+  }
+ 
+  .drink-bottom {
+    display: flex; gap: 0.35rem; margin-top: 0.5rem; flex-wrap: wrap;
+  }
+ 
+  .tag {
+    font-size: 0.56rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--neon);
+    border: 1px solid rgba(228,55,55,0.3);
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+  }
+ 
+  /* ── SEPARADOR ── */
+  .sep {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+    margin: 0.5rem 16px;
+  }
+ 
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem calc(3rem + 60px + var(--sab));
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+ 
+  .footer-logo img {
+    height: 4.5rem; width: auto;
+    display: block; margin: 0 auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(247,241,52,0.15));
+  }
+ 
+  .footer-info {
+    font-size: 0.75rem; letter-spacing: 0.1em;
+    color: var(--muted); margin-bottom: 1.8rem;
+  }
+ 
+  .footer-details {
+    display: flex; justify-content: center;
+    gap: 2rem; flex-wrap: wrap; margin-bottom: 1.8rem;
+  }
+ 
+  .footer-detail-item { text-align: center; }
+ 
+  .footer-detail-label {
+    font-size: 0.6rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--neon); margin-bottom: 0.25rem;
+  }
+ 
+  .footer-detail-value { font-size: 0.82rem; color: var(--muted); }
+ 
+  .footer-copy {
+    font-size: 0.62rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(136,136,153,0.4);
+  }
+ 
+  /* ── FADE-IN ── */
+  .fade-in {
+    opacity: 0; transform: translateY(16px);
+    animation: fadeUp 0.55s ease forwards;
+  }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  .fade-in:nth-child(1) { animation-delay: 0.08s; }
+  .fade-in:nth-child(2) { animation-delay: 0.16s; }
+  .fade-in:nth-child(3) { animation-delay: 0.24s; }
+ 
+  /* ── DESKTOP fallback (> 640px) ── */
+  @media (min-width: 640px) {
+    .bottom-nav {
+      top: 0; bottom: auto;
+      border-top: none; border-bottom: 1px solid var(--border);
+      height: 56px;
+      padding-bottom: 0;
+    }
+    .nav-tab { height: 56px; border-top: none; border-bottom: 2px solid transparent; }
+    .nav-tab.active { border-bottom-color: var(--neon); border-top-color: transparent; }
+    .section { padding-top: 4.5rem; }
+    .hero { min-height: 100svh; }
+    footer { padding-bottom: 3rem; }
+    .drink-item { grid-template-columns: 90px 1fr; }
+    .drink-img  { width: 90px; height: 90px; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-main-logo fade-in">
+      <img src="https://i.ibb.co/ymL0c0d2/logosembg.png" alt="Logo Robson Alves" loading="eager">
+    </h1>
+    <div class="hero-divider"></div>
+  </div>
+  <div class="scroll-hint">CARDÁPIO</div>
+</section>
+ 
+<!-- NAV BOTTOM (mobile-first) -->
+<nav class="bottom-nav" role="navigation" aria-label="Categorias do cardápio">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="goTo('drinks',event)">DRINKS</button>
+    <button class="nav-tab" onclick="goTo('shots',event)">CERVEJAS</button>
+    <button class="nav-tab" onclick="goTo('sem-alcool',event)">SEM ÁLCOOL</button>
+    <button class="nav-tab" onclick="goTo('petiscos',event)">PRATOS</button>
+    <button class="nav-tab" onclick="goTo('porcoes',event)">DOSES</button>
+  </div>
+</nav>
+ 
+<!-- DRINKS -->
+<section class="section" id="drinks">
+  <div class="section-header">
+    <h2 class="section-title">Nossos <em>Drinks</em></h2>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="drink-list">
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Praia do Cachorro" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">Praia do Cachorro - FN</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">MORANGO COM AÇUCAR E VODKA DE FRUTAS VERMELHAS</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Praia Cacimba do Padre" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">Praia Cacimba do Padre (Pôr do Sol) - FN</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">MARACUJÁ, GENGIBRE, HORTELÃ, AÇÚCAR E VODKA DE MARACUJÁ</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Praia do Sancho" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">Praia do Sancho - FN</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">ABACAXI, LIMÃO, AÇÚCAR E VODKA DE BLUEBERRY</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Praia da Conceição" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">Praia da Conceição - FN</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">ABACAXI, HORTELÃ, AÇÚCAR, RUM E RUM(...)</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirinha" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIRINHA: Limão/ Uva/ Abacaxi/ Umbú-Cajá</span>
+          <span class="drink-price">R$ 11</span>
+        </div>
+        <p class="drink-desc">CACHAÇA FRUTA, AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirinha Morango" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIRINHA: Morango</span>
+          <span class="drink-price">R$ 12</span>
+        </div>
+        <p class="drink-desc">CACHAÇA, FRUTA, AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirosca" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIROSCA: Limão/ Uva/ Abacaxi/ Umbú-Cajá</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">VODKA, FRUTA, AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirosca Morango" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIROSCA: Morango</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">VODKA, FRUTA, AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirosca Sky Orloff Smirnoff" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIROSCA: SKY/ ORLOFF/ SMINORFF</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">VODKA, FRUTA: LIMÃO, UVA, ABACAXI UMBU-CAJÁ AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Caipirosca Absolut" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAIPIROSCA: ABSOLUT</span>
+          <span class="drink-price">R$ 16</span>
+        </div>
+        <p class="drink-desc">VODKA, FRUTA, AÇÚCAR E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Gin Tônica" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">GIN ROCK´S + ÁGUA TÔNICA</span>
+          <span class="drink-price">R$ 18</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.nuCCIbvXPfy7lQIQ_NEgwgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Mojito" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">MOJITO</span>
+          <span class="drink-price">R$ 20</span>
+        </div>
+        <p class="drink-desc">RUM BRANCO, LIMÃO, HORTELÃ E ÁGUA COM GÁS</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Espanhola" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ESPANHOLA</span>
+          <span class="drink-price">R$ 20</span>
+        </div>
+        <p class="drink-desc">VINHO, LEITE CONDENSADO, ABACAXI E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Pina Colada" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">PINA COLADA</span>
+          <span class="drink-price">R$ 20</span>
+        </div>
+        <p class="drink-desc">RUM AO LEITE DE COCO E ABACAXI</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Coquetel de Frutas" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">COQUETEL DE FRUTAS</span>
+          <span class="drink-price">R$ 24</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Especial Smirnoff Ice" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ESPECIAL DE SMINORFF ICE</span>
+          <span class="drink-price">R$ 20</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Especial Heineken Budweiser" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ESPECIAL DE HEINEKEN | BUDWEISER</span>
+          <span class="drink-price">R$ 20</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Especial Gin na Banheira" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ESPECIAL DE GIN NA BANHEIRA</span>
+          <span class="drink-price">R$ 22</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Gin com Gengibre" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">GIN CON GENGIBRE</span>
+          <span class="drink-price">R$ 22</span>
+        </div>
+        <p class="drink-desc">XAROPE DE GENGIBRE, GIN, ÁGUA TÔNICA, ANIS ESTRELADO, PIMENTA ROSA, 2 FATIAS DE GENGIBRE E AROMA DE CANELA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Gin com RedBull de Coco" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">GIN COM REDBULL DE COCO</span>
+          <span class="drink-price">R$ 24</span>
+        </div>
+        <p class="drink-desc">GIN, REDBULL DE COCO, XAROPE SIMPLES, PIMENTA ROSA, 2 FATIAS DE GENGIBRE E AROMA DE CANELA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Gin com Ibisco" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">GIN COM IBISCO</span>
+          <span class="drink-price">R$ 22</span>
+        </div>
+        <p class="drink-desc">GIN, IBISCO, HONIN DE MORANGO, ÁGUA TÔNICA E GELO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Drink" alt="Sex on the Beach" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">SEX ON THE BEACH</span>
+          <span class="drink-price">R$ 24</span>
+        </div>
+        <p class="drink-desc">VODKA, SUCO DE LARANJA, LICOR DE PÊSSEGO E GRENADINE</p>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="sep"></div>
+ 
+<!-- CERVEJAS -->
+<section class="section" id="shots">
+  <div class="section-header">
+    <h2 class="section-title">Cervejas <em>Long Neck</em></h2>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="drink-list">
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://m.media-amazon.com/images/I/51lf2NSArYL.jpg" alt="Budweiser" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">BUDWEISER</span>
+          <span class="drink-price">R$ 9</span>
+        </div>
+        <p class="drink-desc">LONG-NECK</p>
+        <div class="drink-bottom"><span class="tag">popular</span></div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse2.mm.bing.net/th/id/OIP.2eeeitSC_eCsK9EpkmGi-gHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Heineken" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">HEINEKEN</span>
+          <span class="drink-price">R$ 10</span>
+        </div>
+        <p class="drink-desc">LONG-NECK</p>
+        <div class="drink-bottom"><span class="tag">popular</span></div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://static.paodeacucar.com/img/uploads/1/898/23754898.jpeg" alt="Cabaré Ice" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CABARÉ ICE SABORES</span>
+          <span class="drink-price">R$ 12</span>
+        </div>
+        <p class="drink-desc">LONG-NECK</p>
+        <div class="drink-bottom"><span class="tag">popular</span></div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://carrefourbrfood.vtexassets.com/arquivos/ids/106451985/cerveja-skol-beats-senses-313ml-1.jpg?v=638144915387800000" alt="Skol Beats" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">SKOL BEATS</span>
+          <span class="drink-price">R$ 12</span>
+        </div>
+        <p class="drink-desc">LONG-NECK</p>
+        <div class="drink-bottom"><span class="tag">popular</span></div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.r_JLFeYVfwgRFQDHmBIHPAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Chopp Alamoa 300ml" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CHOPP DE VINHO ALAMOA 300ML</span>
+          <span class="drink-price">R$ 10</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.r_JLFeYVfwgRFQDHmBIHPAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Chopp Alamoa 500ml" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CHOPP DE VINHO ALAMOA 500ML</span>
+          <span class="drink-price">R$ 17</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="sep"></div>
+ 
+<!-- SEM ÁLCOOL -->
+<section class="section" id="sem-alcool">
+  <div class="section-header">
+    <h2 class="section-title">Sem <em>Álcool</em></h2>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="drink-list">
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Mocktail" alt="Coquetel Sem Álcool" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">COQUETEL SEM ÁLCOOL</span>
+          <span class="drink-price">R$ 24</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/00b4ff?text=Mocktail" alt="Soda Italiana" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">SODA ITALIANA (MORANGO OU TANGERINA)</span>
+          <span class="drink-price">R$ 18</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.mWjY94YDp_R4sngB6yUyZgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="RedBull" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">REDBULL SABORES</span>
+          <span class="drink-price">R$ 14</span>
+        </div>
+        <p class="drink-desc">LATA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://lojasrede.vtexassets.com/arquivos/ids/357133/2022101422-1-Kit-Energetico-Monster-Energy-Lata-473ml-6-Unidades-.jpg?v=638355714082070000" alt="Monster" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ENERGÉTICO MONSTER</span>
+          <span class="drink-price">R$ 14</span>
+        </div>
+        <p class="drink-desc">LATA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://static-webv8.jet.com.br/drogaosuper/Produto/multifotos/hd/7892840812850_zoom.jpg" alt="H2OH" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">H20H LIMONETO</span>
+          <span class="drink-price">R$ 8</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.E8jxpsST5pCmyNjhtQ64cgHaHa?w=800&h=800&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Refrigerante" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">REFRIGERANTE (TRADICIONAL OU ZERO)</span>
+          <span class="drink-price">R$ 7</span>
+        </div>
+        <p class="drink-desc">LATA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://images.tcdn.com.br/img/img_prod/1115696/180_refrigerante_schweppes_tonica_lata_350ml_6_und_159_1_5f272606c6fb631e3a02a4aa8d077a83.jpg" alt="Tônica" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">TÔNICA OU SCHWEPPES</span>
+          <span class="drink-price">R$ 7</span>
+        </div>
+        <p class="drink-desc">LATA</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse2.mm.bing.net/th/id/OIP.UonRXtniwbu0OY9inO8tZAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Água" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ÁGUA</span>
+          <span class="drink-price">R$ 4</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse3.mm.bing.net/th/id/OIP.0t1iEsnxWSWmoI-KiWd8OAHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Água com Gás" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ÁGUA COM GÁS</span>
+          <span class="drink-price">R$ 5</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="sep"></div>
+ 
+<!-- PETISCOS -->
+<section class="section" id="petiscos">
+  <div class="section-header">
+    <h2 class="section-title">Petiscos <em>&amp; Pratos</em></h2>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="drink-list">
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Picanha" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">PICANHA COM FRITAS</span>
+          <span class="drink-price">R$ 49,99</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Carne de Sol" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CARNE DE SOL COM FRITAS</span>
+          <span class="drink-price">R$ 46,99</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Camarão" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CAMARÃO AO ALHO E ÓLEO</span>
+          <span class="drink-price">R$ 38,00</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Frango" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ASINHA + COXA C/ FRITAS</span>
+          <span class="drink-price">R$ 39,00</span>
+        </div>
+        <p class="drink-desc">TEMPERO PARAIBANO</p>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Calabresa" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CALABRESA COM FRITAS</span>
+          <span class="drink-price">R$ 34,00</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Tábua de Frios" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">TÁBUA DE FRIOS</span>
+          <span class="drink-price">R$ 26,00</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Pastel" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">PORÇÃO DE PASTEL 8 UNIDADES</span>
+          <span class="drink-price">R$ 20,00</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Bolinhos" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">BOLINHOS DIVERSOS (12 UNIDADES)</span>
+          <span class="drink-price">R$ 20,00</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/c9a84c?text=Food" alt="Batata Frita" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">BATATA FRITA</span>
+          <span class="drink-price">R$ 15,00</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="sep"></div>
+ 
+<!-- DOSES -->
+<section class="section" id="porcoes">
+  <div class="section-header">
+    <h2 class="section-title">Doses</h2>
+    <div class="section-line"></div>
+  </div>
+ 
+  <div class="drink-list">
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://placehold.co/110x110/111116/ff7a50?text=Dose" alt="Cachaça Pernambucana" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CACHAÇA PERNAMBUCANA</span>
+          <span class="drink-price">R$ 9</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://www.bing.com/th?id=OPHS.oe6eoQY94hEzBg474C474&o=5&pid=21.1&w=128&h=188&qlt=100&dpr=1,3&o=2&bw=6&bc=FFFFFF" alt="Cachaça Bananinha" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">CACHAÇA BANANINHA</span>
+          <span class="drink-price">R$ 9</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.w__OuiyeZW7vKQ1yMIqBKwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Amarula" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">AMARULA</span>
+          <span class="drink-price">R$ 14</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse2.mm.bing.net/th/id/OIP.LKRNOl3wxt3dCWIsUkG7AgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Orloff" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ORLOFF</span>
+          <span class="drink-price">R$ 8</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse2.mm.bing.net/th/id/OIP.GsOZm39dosJAWPQItmF2xwHaNn?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Smirnoff" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">SMINORFF</span>
+          <span class="drink-price">R$ 8</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://th.bing.com/th/id/OIP.2l8hMYh6i1EZ22oep_k9twAAAA?w=107&h=195&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Sky" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">SKY</span>
+          <span class="drink-price">R$ 9</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse1.mm.bing.net/th/id/OIP.27Laazx0nruDfN-cGAZYqgHaNn?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Black and White" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">BLACK &amp; WHITE</span>
+          <span class="drink-price">R$ 8</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.S1PdG8McZ51FRRJvTt2zCgHaKf?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Red Label" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">RED LABEL</span>
+          <span class="drink-price">R$ 11</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.zr7_p4s2keiEanfKnC4i3wHaO0?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Alcatrão" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">ALCATRÃO</span>
+          <span class="drink-price">R$ 10</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="drink-item">
+      <img class="drink-img" src="https://tse4.mm.bing.net/th/id/OIP.RmRBbZhqAjp_TrznxAUnSwHaIa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Tequila" loading="lazy">
+      <div class="drink-info">
+        <div class="drink-top">
+          <span class="drink-name">TEQUILA JOSE CUERVO</span>
+          <span class="drink-price">R$ 15</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="https://i.ibb.co/ymL0c0d2/logosembg.png" alt="Logo Robson Alves">
+  </div>
+  <p class="footer-info">&nbsp;</p>
+ 
+  <div class="footer-details">
+    <div class="footer-detail-item">
+      <div class="footer-detail-label">Horário</div>
+      <div class="footer-detail-value">Qui–Dom: 18h às 00h</div>
+    </div>
+    <div class="footer-detail-item">
+      <div class="footer-detail-label">Contato</div>
+      <div class="footer-detail-value">(81) 9 8910-1417</div>
+    </div>
+    <div class="footer-detail-item">
+      <div class="footer-detail-label">Instagram</div>
+      <div class="footer-detail-value">@robsonalvesdrinks</div>
+    </div>
+  </div>
+ 
+  <p class="footer-copy">dev; KARLOS · Todos os direitos reservados</p>
+</footer>
+ 
+<script>
+  /* ── NAVEGAÇÃO ── */
+  function goTo(id, e) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+ 
+    const el = document.getElementById(id);
+    if (!el) return;
+ 
+    // offset da nav (bottom ou top dependendo do viewport)
+    const isMobile = window.innerWidth < 640;
+    const navH = isMobile ? 60 : 56;
+    const top = el.getBoundingClientRect().top + window.scrollY - (isMobile ? 16 : navH + 16);
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+ 
+  /* ── HIGHLIGHT AUTOMÁTICO AO ROLAR ── */
+  const sections = ['drinks','shots','sem-alcool','petiscos','porcoes'];
+  const tabs     = document.querySelectorAll('.nav-tab');
+  const map      = Object.fromEntries(sections.map((id, i) => [id, i]));
+ 
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = map[entry.target.id];
+        if (idx !== undefined) {
+          tabs.forEach(t => t.classList.remove('active'));
+          tabs[idx].classList.add('active');
+          // rola a tab p/ ficar visível na nav horizontal
+          tabs[idx].scrollIntoView({ inline: 'nearest', block: 'nearest' });
+        }
+      }
+    });
+  }, {
+    rootMargin: '-20% 0px -60% 0px',
+    threshold: 0
+  });
+ 
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+</script>
+ 
+</body>
+</html>
+ 
